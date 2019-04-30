@@ -16,15 +16,11 @@
     <context:component-scan base-package="cn.zcp.demo"/>
 
     <!--定义此项目的名称-->
-    <dubbo:application name="demo-provider"/>
+    <dubbo:application name="demo-consumer"/>
 
     <!--配置注册中心,以下两种方式都支持-->
     <!--<dubbo:registry address="zookeeper://182.61.44.56:2181?backup=182.61.44.56:2182,182.61.44.56:2183"/>-->
     <dubbo:registry protocol="zookeeper" address="182.61.44.56:2181,182.61.44.56:2182,182.61.44.56:2183"/>
-
-    <!--使用dubbo协议,绑定在端口20880端口上-->
-    <dubbo:protocol name="dubbo" port="20880"/>
-
-    <!--定义服务-->
-    <dubbo:service interface="cn.zcp.demo.api.UserService" ref="userServiceImpl"/>
+    <!-- 为远程服务生成代理,然后可以使用与本地普通接口 -->
+    <dubbo:reference id="userService" check="false" interface="cn.zcp.demo.api.UserService"/>
 </beans>

@@ -2,6 +2,7 @@ package cn.zcp.demo.api.impl;
 
 import cn.zcp.demo.api.UserService;
 import cn.zcp.demo.bean.User;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @Time 2019-04-28 17:43
  * @describe dubbo-demo 用户服务实现类
  */
+@Service
 public class UserServiceImpl implements UserService {
 
     static List<User> users = new ArrayList<>();

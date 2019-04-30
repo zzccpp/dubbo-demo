@@ -1,12 +1,14 @@
 package cn.zcp.demo.bean;
 
+import java.io.Serializable;
+
 /**
  * @author zhongchunping
  * @version 1.0
  * @Time 2019-04-28 17:35
  * @describe dubbo-demo 用户操作实体
  */
-public class User {
+public class User implements Serializable {
 
     private int id;
     private String name;
