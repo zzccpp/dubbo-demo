@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,9 +39,13 @@ public class SocketProtocol implements IProtocol{
         try {
             int port = Integer.parseInt(address.split(":")[1]);
             serverSocket = new ServerSocket(port);
+            //注册服务
+            for (String service:serverObjMap.keySet()) {
+                zk.register(service,address);
+            }
             while(true){
                 Socket socket = serverSocket.accept();
-                new Thread(new ReqProcess(socket)).start();
+                new Thread(new ReqProcess(socket,serverObjMap)).start();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +72,4 @@ public class SocketProtocol implements IProtocol{
             serverObjMap.put(serverName,obj);
         }
     }
-
-
-
 }

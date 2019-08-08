@@ -1,5 +1,7 @@
 package cn.zcp.demo.service;
 
+import cn.zcp.demo.bean.User;
+
 /**
  * @author zhongchunping
  * @version 1.0
@@ -11,5 +13,12 @@ package cn.zcp.demo.service;
 public interface HelloService {
 
     String sayHello(String name);
+
+    /**
+     * 定义获取实体封装对象
+     * @param age
+     * @return
+     */
+    User getUser(Integer age);
 
 }

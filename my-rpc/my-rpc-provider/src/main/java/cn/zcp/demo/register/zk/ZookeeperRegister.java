@@ -1,8 +1,6 @@
 package cn.zcp.demo.register.zk;
 
-import cn.zcp.demo.service.HelloService;
 import org.apache.curator.RetryPolicy;
-import org.apache.curator.RetrySleeper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -22,34 +20,37 @@ import java.util.Objects;
 public class ZookeeperRegister {
 
     private String ZOOKEEPER_HOST="182.61.44.56:2181,182.61.44.56:2182,182.61.44.56:2183";
-    private int SESSION_TIMEOUT=10*1000;
-    private int CONNECT_TIMEOUT=5*1000;
+    private int SESSION_TIMEOUT=30*1000;
+    private int CONNECT_TIMEOUT=20*1000;
 
     private CuratorFramework cf;
 
     public ZookeeperRegister(){
         //失败,尝试3次,间隔1秒
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(3,1000);
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000,3);
         this.cf = CuratorFrameworkFactory.newClient(ZOOKEEPER_HOST, SESSION_TIMEOUT, CONNECT_TIMEOUT, retryPolicy);
         cf.start();
+        System.out.println("zk start!");
     }
 
     /**
      * 发布服务,至my-rpc/provider节点下
-     * @param cls
+     * @param clsName
      */
-    public void register(Class cls,String address) throws Exception {
+    public void register(String clsName,String address) throws Exception {
 
-        String path = "/my-rpc/provider";
+        String path = "/my-rpc/provider/"+clsName;
+        String serviceNode = path+"/"+address;
         //获取全类名
-        String name = cls.getName();
         Objects.requireNonNull(cf,"注册中心未连接上!");
-
+        System.out.println("开始注册服务!");
+        long stime = System.currentTimeMillis();
         Stat stat = cf.checkExists().forPath(path);
         System.out.println(stat);
         if(null==stat){
-            cf.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path,"0".getBytes("utf-8"));
+            cf.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path);
         }
-        cf.create().withMode(CreateMode.EPHEMERAL).forPath(path+"/"+address,"0".getBytes("utf-8"));
+        cf.create().withMode(CreateMode.EPHEMERAL).forPath(serviceNode);
+        System.out.println("服务注册完成!"+(System.currentTimeMillis()-stime));
     }
 }
